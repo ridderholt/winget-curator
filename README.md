@@ -29,6 +29,7 @@ Use `--output <dir>` to change that. Pass `--dry-run` to skip the interactive pr
 just export everything (useful for a quick full backup without curating).
 
 Controls in the checklists:
+
 - `Space` toggles the highlighted item (or an entire source group if a group header is
   highlighted).
 - `Enter` confirms your selection and moves to the next step.
@@ -39,7 +40,7 @@ Controls in the checklists:
 Install the App Installer (winget) if it isn't already present, then run:
 
 ```powershell
-winget import -i "C:\Privatespace\Repos\winget-curator\winget-curator-output\curated-import.json"
+winget import -i "[PAHT]\curated-import.json"
 ```
 
 Then go through `manual-install-notes.txt` and install anything listed there by hand
@@ -47,11 +48,11 @@ Then go through `manual-install-notes.txt` and install anything listed there by 
 
 ### Re-curating later
 
-You can re-run the tool before a *future* reinstall and start from your last curated list
+You can re-run the tool before a _future_ reinstall and start from your last curated list
 instead of from scratch:
 
 ```powershell
-dotnet run -- --reload "C:\Privatespace\Repos\winget-curator\winget-curator-output\curated-import.json"
+dotnet run -- --reload "[PATH]\curated-import.json"
 ```
 
 This pre-applies your previous keep/remove choices onto the fresh export, so you only need to
