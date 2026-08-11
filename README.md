@@ -10,11 +10,8 @@ domain-mandated reinstall, so you can restore them in one shot afterwards.
    to see everything installed locally (including apps winget can't manage).
 2. Shows an interactive, source-grouped checklist (everything pre-checked) so you can uncheck
    anything you don't want to reinstall.
-3. Asks a second time which of the kept apps you use **daily** vs **occasionally**, purely so
-   you have that context for yourself later (not used by winget).
-4. Writes out:
+3. Writes out:
    - `curated-import.json` — a valid `winget import` file with just the apps you kept.
-   - `curated-categories.json` — a small sidecar mapping each app id to `Daily`/`Occasional`.
    - `manual-install-notes.txt` — apps winget saw installed locally but can't reinstall for
      you (no matching source package), so you don't forget them.
 
@@ -57,14 +54,12 @@ instead of from scratch:
 dotnet run -- --reload "C:\Privatespace\Repos\winget-curator\winget-curator-output\curated-import.json"
 ```
 
-This pre-applies your previous keep/remove choices and Daily/Occasional tags onto the fresh
-export, so you only need to adjust for what's changed.
+This pre-applies your previous keep/remove choices onto the fresh export, so you only need to
+adjust for what's changed.
 
 ## Notes
 
 - `winget export` only includes apps winget can map to a known source (winget, msstore, etc).
   Manually installed software, some portable apps, and browser extensions won't show up there —
   that's what `manual-install-notes.txt` is for.
-- The category tags are for your own reference/prioritization; they are not read by
-  `winget import`.
 - Requires the Windows Package Manager (`winget`) to be installed and on `PATH`.

@@ -61,40 +61,34 @@ if (reloadPath is not null)
     }
 
     var priorCurated = await WingetJsonSerializer.LoadExportFileAsync(reloadPath);
-    var categoriesPath = Path.Combine(Path.GetDirectoryName(reloadPath) ?? ".", "curated-categories.json");
-    var priorCategories = await WingetJsonSerializer.LoadCategoriesFileAsync(categoriesPath);
 
-    CurationService.ApplyPriorSelection(items, priorCurated, priorCategories);
+    CurationService.ApplyPriorSelection(items, priorCurated);
     AnsiConsole.MarkupLine($"[grey]Loaded prior selection from {Markup.Escape(reloadPath)}.[/]\n");
 }
 
 if (dryRun)
 {
-    AnsiConsole.MarkupLine("[grey]--dry-run: skipping interactive prompts, keeping everything as Occasional.[/]\n");
+    AnsiConsole.MarkupLine("[grey]--dry-run: skipping interactive prompts, keeping everything.[/]\n");
 }
 else
 {
     CurationPrompts.PromptKeepOrRemove(items);
-    CurationPrompts.PromptDailyVsOccasional(items);
 }
 
 var curatedFile = CurationService.BuildCuratedFile(export, items);
-var categoriesFile = CurationService.BuildCategoriesFile(items);
 var unmanaged = CurationService.FindUnmanagedApps(installed, export);
 
 var importPath = Path.Combine(outputDir, "curated-import.json");
-var categoriesOutPath = Path.Combine(outputDir, "curated-categories.json");
 var notesPath = Path.Combine(outputDir, "manual-install-notes.txt");
 
 await WingetJsonSerializer.SaveImportFileAsync(curatedFile, importPath);
-await WingetJsonSerializer.SaveCategoriesFileAsync(categoriesFile, categoriesOutPath);
 
 CurationPrompts.ShowUnmanagedApps(unmanaged);
 await WriteManualNotesAsync(notesPath, unmanaged);
 
 AnsiConsole.MarkupLine("\n[bold green]Done![/] Files written to:");
 AnsiConsole.MarkupLine($"  [blue]{Markup.Escape(importPath)}[/]");
-AnsiConsole.MarkupLine($"  [blue]{Markup.Escape(categoriesOutPath)}[/]");
+AnsiConsole.MarkupLine($"  [blue]{Markup.Escape(notesPath)}[/]");
 AnsiConsole.MarkupLine($"  [blue]{Markup.Escape(notesPath)}[/]");
 AnsiConsole.MarkupLine("\nAfter reinstalling Windows, restore your apps with:");
 AnsiConsole.MarkupLine($"  [yellow]winget import -i \"{importPath}\"[/]");

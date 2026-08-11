@@ -58,16 +58,6 @@ public static class CurationService
         return result;
     }
 
-    public static CuratedCategoriesFile BuildCategoriesFile(List<CurationItem> items)
-    {
-        var file = new CuratedCategoriesFile();
-        foreach (var item in items.Where(i => i.Keep))
-        {
-            file.Categories[item.Package.PackageIdentifier] = item.Category.ToString();
-        }
-        return file;
-    }
-
     /// <summary>
     /// Finds apps `winget list` reports locally that have no matching PackageIdentifier in
     /// the export (i.e. winget cannot manage/reinstall them via `winget import`), so the user
@@ -87,12 +77,12 @@ public static class CurationService
     }
 
     /// <summary>
-    /// Applies a previously saved curated file + categories sidecar onto a freshly flattened
-    /// full item list, so the user can re-edit a prior selection instead of starting over.
-    /// Items not present in the prior curated file default to Keep=false (since they weren't
-    /// part of the last curated set) unless they simply weren't installed before.
+    /// Applies a previously saved curated file onto a freshly flattened full item list, so the
+    /// user can re-edit a prior selection instead of starting over. Items not present in the
+    /// prior curated file default to Keep=false (since they weren't part of the last curated
+    /// set) unless they simply weren't installed before.
     /// </summary>
-    public static void ApplyPriorSelection(List<CurationItem> freshItems, WingetPackageFile priorCurated, CuratedCategoriesFile? priorCategories)
+    public static void ApplyPriorSelection(List<CurationItem> freshItems, WingetPackageFile priorCurated)
     {
         var priorIds = new HashSet<string>(
             priorCurated.Sources.SelectMany(s => s.Packages).Select(p => p.PackageIdentifier),
@@ -101,13 +91,6 @@ public static class CurationService
         foreach (var item in freshItems)
         {
             item.Keep = priorIds.Contains(item.Package.PackageIdentifier);
-
-            if (priorCategories is not null &&
-                priorCategories.Categories.TryGetValue(item.Package.PackageIdentifier, out var categoryName) &&
-                Enum.TryParse<AppCategory>(categoryName, ignoreCase: true, out var category))
-            {
-                item.Category = category;
-            }
         }
     }
 }

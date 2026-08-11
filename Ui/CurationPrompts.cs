@@ -4,8 +4,7 @@ using WingetCurator.Models;
 namespace WingetCurator.Ui;
 
 /// <summary>
-/// Interactive prompts for curating the winget export: keep/remove selection followed
-/// by Daily/Occasional tagging of the kept items.
+/// Interactive prompts for curating the winget export: keep/remove selection.
 /// </summary>
 public static class CurationPrompts
 {
@@ -52,46 +51,6 @@ public static class CurationPrompts
 
         var keptCount = items.Count(i => i.Keep);
         AnsiConsole.MarkupLine($"[green]Keeping {keptCount} of {items.Count} apps.[/]");
-    }
-
-    /// <summary>
-    /// Second pass over the kept items: pick which ones are used daily. Everything not
-    /// picked here is tagged Occasional. Avoids a tedious per-item prompt loop.
-    /// </summary>
-    public static void PromptDailyVsOccasional(List<CurationItem> items)
-    {
-        var kept = items.Where(i => i.Keep).ToList();
-        if (kept.Count == 0)
-        {
-            return;
-        }
-
-        AnsiConsole.MarkupLine("[bold]Now tag which of the kept apps you use [green]daily[/].[/] Everything left unchecked will be tagged [grey]Occasional[/].");
-
-        var prompt = new MultiSelectionPrompt<CurationItem>()
-            .Title("Select [green]daily-use[/] apps:")
-            .Required(false)
-            .PageSize(20)
-            .InstructionsText("[grey](Press <space> to toggle, <enter> to accept)[/]")
-            .UseConverter(i => i.DisplayLabel);
-
-        foreach (var group in kept.GroupBy(i => i.SourceName).OrderBy(g => g.Key, StringComparer.OrdinalIgnoreCase))
-        {
-            prompt.AddChoiceGroup(
-                new CurationItem { SourceName = group.Key, Package = new WingetPackage { PackageIdentifier = $"[bold]{group.Key}[/]" } },
-                group);
-        }
-
-        var dailySelection = AnsiConsole.Prompt(prompt);
-        var dailySet = new HashSet<CurationItem>(dailySelection);
-
-        foreach (var item in kept)
-        {
-            item.Category = dailySet.Contains(item) ? AppCategory.Daily : AppCategory.Occasional;
-        }
-
-        var dailyCount = kept.Count(i => i.Category == AppCategory.Daily);
-        AnsiConsole.MarkupLine($"[green]{dailyCount} tagged Daily, {kept.Count - dailyCount} tagged Occasional.[/]");
     }
 
     public static void ShowUnmanagedApps(List<InstalledApp> unmanaged)

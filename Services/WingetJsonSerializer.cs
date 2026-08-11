@@ -4,7 +4,7 @@ using WingetCurator.Models;
 namespace WingetCurator.Services;
 
 /// <summary>
-/// Loads and saves the winget import/export JSON format, and the curated categories sidecar file.
+/// Loads and saves the winget import/export JSON format.
 /// </summary>
 public static class WingetJsonSerializer
 {
@@ -36,20 +36,4 @@ public static class WingetJsonSerializer
         await File.WriteAllTextAsync(path, json, ct).ConfigureAwait(false);
     }
 
-    public static async Task<CuratedCategoriesFile?> LoadCategoriesFileAsync(string path, CancellationToken ct = default)
-    {
-        if (!File.Exists(path))
-        {
-            return null;
-        }
-        var json = await File.ReadAllTextAsync(path, ct).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<CuratedCategoriesFile>(json, Options);
-    }
-
-    public static async Task SaveCategoriesFileAsync(CuratedCategoriesFile file, string path, CancellationToken ct = default)
-    {
-        file.GeneratedDate ??= DateTimeOffset.Now.ToString("O");
-        var json = JsonSerializer.Serialize(file, Options);
-        await File.WriteAllTextAsync(path, json, ct).ConfigureAwait(false);
-    }
 }
