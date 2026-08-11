@@ -20,7 +20,7 @@ domain-mandated reinstall, so you can restore them in one shot afterwards.
 Run it any time before a reinstall:
 
 ```powershell
-cd C:\Privatespace\Repos\winget-curator
+cd [PATH]\winget-curator
 dotnet run
 ```
 
