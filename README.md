@@ -40,7 +40,7 @@ Controls in the checklists:
 Install the App Installer (winget) if it isn't already present, then run:
 
 ```powershell
-winget import -i "[PAHT]\curated-import.json"
+winget import -i "[PATH]\curated-import.json"
 ```
 
 Then go through `manual-install-notes.txt` and install anything listed there by hand
@@ -52,7 +52,7 @@ You can re-run the tool before a _future_ reinstall and start from your last cur
 instead of from scratch:
 
 ```powershell
-dotnet run -- --reload "[PATH]\curated-import.json"
+dotnet run --reload "[PATH]\curated-import.json"
 ```
 
 This pre-applies your previous keep/remove choices onto the fresh export, so you only need to
